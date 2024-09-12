@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Empleado;
+use App\Models\Anime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class EmpleadoController extends Controller
+class AnimeController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $empleados = Empleado::paginate(5); // Asegúrate de usar 'empleados' en plural
-        return view('empleado.index', compact('empleados'));
+        $animes = Anime::paginate(5); // Paginación de 5 resultados por página
+        return view('anime.index', compact('animes'));
     }   
 
     /**
@@ -22,7 +22,7 @@ class EmpleadoController extends Controller
      */
     public function create()
     {
-        return view('empleado.create');
+        return view('anime.create');
     }
 
     /**
@@ -32,9 +32,10 @@ class EmpleadoController extends Controller
     {
         $campos = [
             'Nombre' => 'required|string|max:100',
-            'ApellidoPaterno' => 'required|string|max:100',
-            'ApellidoMaterno' => 'required|string|max:100',
-            'Correo' => 'required|email',
+            'Alias' => 'required|string|max:100',
+            'Edad' => 'required|integer|min:0',
+            'Genero' => 'required|string|max:50',
+            'Meta' => 'nullable|string|max:255',
             'Foto' => 'required|max:1000|mimes:jpeg,png,jpg',
         ];
         $mensaje = [
@@ -44,19 +45,19 @@ class EmpleadoController extends Controller
 
         $this->validate($request, $campos, $mensaje);
 
-        $datosEmpleado = $request->except('_token');
+        $datosAnime = $request->except('_token');
         if ($request->hasFile('Foto')) {
-            $datosEmpleado['Foto'] = $request->file('Foto')->store('uploads', 'public');
+            $datosAnime['Foto'] = $request->file('Foto')->store('uploads', 'public');
         }
-        Empleado::create($datosEmpleado);
+        Anime::create($datosAnime);
 
-        return redirect('empleado/')->with('mensaje', 'Empleado agregado con éxito');
+        return redirect('anime/')->with('mensaje', 'Anime agregado con éxito');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Empleado $empleado)
+    public function show(Anime $anime)
     {
         // Implementar si es necesario
     }
@@ -66,8 +67,8 @@ class EmpleadoController extends Controller
      */
     public function edit($id)
     {
-        $empleado = Empleado::findOrFail($id);
-        return view('empleado.edit', compact('empleado'));
+        $anime = Anime::findOrFail($id);
+        return view('anime.edit', compact('anime'));
     }
 
     /**
@@ -77,9 +78,10 @@ class EmpleadoController extends Controller
     {
         $campos = [
             'Nombre' => 'required|string|max:100',
-            'ApellidoPaterno' => 'required|string|max:100',
-            'ApellidoMaterno' => 'required|string|max:100',
-            'Correo' => 'required|email',
+            'Alias' => 'required|string|max:100',
+            'Edad' => 'required|integer|min:0',
+            'Genero' => 'required|string|max:50',
+            'Meta' => 'nullable|string|max:255',
         ];
         $mensaje = [
             'required' => 'El :attribute es requerido',
@@ -92,20 +94,20 @@ class EmpleadoController extends Controller
 
         $this->validate($request, $campos, $mensaje);
 
-        $datosEmpleado = $request->except(['_token', '_method']);
+        $datosAnime = $request->except(['_token', '_method']);
 
         if ($request->hasFile('Foto')) {
-            $empleado = Empleado::findOrFail($id);
+            $anime = Anime::findOrFail($id);
             // Eliminar la foto anterior
-            if ($empleado->Foto) {
-                Storage::delete('public/' . $empleado->Foto);
+            if ($anime->Foto) {
+                Storage::delete('public/' . $anime->Foto);
             }
-            $datosEmpleado['Foto'] = $request->file('Foto')->store('uploads', 'public');
+            $datosAnime['Foto'] = $request->file('Foto')->store('uploads', 'public');
         }
 
-        Empleado::where('id', $id)->update($datosEmpleado);
+        Anime::where('id', $id)->update($datosAnime);
 
-        return redirect('empleado')->with('mensaje', 'Empleado modificado con éxito');
+        return redirect('anime')->with('mensaje', 'Anime modificado con éxito');
     }
 
     /**
@@ -113,12 +115,12 @@ class EmpleadoController extends Controller
      */
     public function destroy($id)
     {
-        $empleado = Empleado::findOrFail($id);
-        if ($empleado->Foto) {
-            Storage::delete('public/' . $empleado->Foto);
+        $anime = Anime::findOrFail($id);
+        if ($anime->Foto) {
+            Storage::delete('public/' . $anime->Foto);
         }
-        Empleado::destroy($id);
+        Anime::destroy($id);
 
-        return redirect('empleado')->with('mensaje', 'Empleado eliminado con éxito');
+        return redirect('anime')->with('mensaje', 'Anime eliminado con éxito');
     }
 }

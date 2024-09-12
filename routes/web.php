@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EmpleadoController;
+use App\Http\Controllers\AnimeController;
 Route::get('/', function () {
     return view('auth.login');
 });
@@ -12,13 +13,13 @@ Route::get('/', function () {
 
 Route:: get('/empleado/create',[EmpleadoController::class,'create']);
 */
-Route::resource('empleado',EmpleadoController::class)->middleware('auth');
-Auth::routes(['register'=>false,'reset'=>false]);
+Route::resource('anime',AnimeController::class)->middleware('auth');
+Auth::routes(['register'=>true,'reset'=>true]);
 
-Route::get('/home', [EmpleadoController::class, 'index'])->name('home');
+Route::get('/home', [AnimeController::class, 'index'])->name('home');
 
 Route:: group (['middleware'=> 'auth'],function(){
     
-    Route::get('/',[EmpleadoController::class, 'index'])->name('home');
+    Route::get('/',[AnimeController::class, 'index'])->name('home');
 
 });
